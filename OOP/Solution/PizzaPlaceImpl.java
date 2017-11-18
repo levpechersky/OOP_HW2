@@ -1,44 +1,89 @@
 package OOP.Solution;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
 import OOP.Provided.PizzaLover;
 import OOP.Provided.PizzaPlace;
 
 public class PizzaPlaceImpl implements PizzaPlace {
+	private int id;
+	private int distFromTech;
+	private String name;
+	private HashSet<String> menu;
+	private TreeMap<PizzaLover, Integer> ratings;
+
+	public PizzaPlaceImpl(int id, String name, int distFromTech, Set<String> menu){
+		this.id = id;
+		this.name = name;
+		this.distFromTech = distFromTech;
+		this.menu = new HashSet<String>(menu); // copy set
+		this.ratings = new TreeMap<>();
+	}
 
 	@Override
 	public int compareTo(PizzaPlace arg0) {
-		// TODO Auto-generated method stub
-		return 0;
+		Integer id = this.id, other_id = arg0.getId();
+		return id.compareTo(other_id);
+	}
+
+	@Override
+	public boolean equals(Object o){
+		if (o.getClass() != this.getClass())
+			return false;
+
+		PizzaPlaceImpl lhs = this;
+		PizzaPlaceImpl rhs = (PizzaPlaceImpl) o;
+
+		return (lhs.compareTo(rhs) == 0) && (rhs.compareTo(lhs) == 0);
+	}
+
+	@Override
+	public String toString(){
+		String menu_string = this.menu.stream().
+				sorted().
+				map(Object::toString).
+				collect(Collectors.joining(",")).toString();
+		String res = String.format("PizzaPlace: %s.\n" +
+				"Id: %d.\n" +
+				"Distance: %d.\n" +
+				"Menu: %s.", this.name, this.id, this.distFromTech, menu_string);
+		return res;
 	}
 
 	@Override
 	public int getId() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.id;
 	}
 
 	@Override
 	public int distance() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.distFromTech;
 	}
 
 	@Override
 	public PizzaPlace rate(PizzaLover pl, int r) throws RateRangeException {
-		// TODO Auto-generated method stub
-		return null;
+		if (r < 0 || r > 5)
+			throw new RateRangeException();
+
+		ratings.put(pl, new Integer(r)); // puts new value or replaces an old one
+		return this;
 	}
 
 	@Override
 	public int numberOfRates() {
-		// TODO Auto-generated method stub
-		return 0;
+		return ratings.size();
 	}
 
 	@Override
 	public double averageRating() {
-		// TODO Auto-generated method stub
-		return 0;
+		if (this.numberOfRates() == 0)
+			return 0.0;
+
+		double ratings_sum = ratings.values().stream().mapToInt(Integer::intValue).sum();
+		return ratings_sum / this.numberOfRates();
 	}
 
 }

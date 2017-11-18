@@ -86,9 +86,11 @@ public class PizzaLoverImpl implements PizzaLover {
     @Override
     public PizzaLover favorite(PizzaPlace pp)
             throws UnratedFavoritePizzaPlaceException {
-        if(!(pp.wasRatedBy(this)))
-            throw new UnratedFavoritePizzaPlaceException();
+    	// TODO: Currently, I can't see a way to do this (we can't add methods to interface)
+//        if(!(pp.wasRatedBy(this)))
+//            throw new UnratedFavoritePizzaPlaceException();
         this._favorite_places.add(pp);
+        return this;
     }
 
     @Override
@@ -104,6 +106,7 @@ public class PizzaLoverImpl implements PizzaLover {
         if(this._user_friends.contains(pl))
             throw new ConnectionAlreadyExistsException();
         this._user_friends.add(pl);
+        return this;
     }
 
     @Override
