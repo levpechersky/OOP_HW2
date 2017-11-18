@@ -31,7 +31,7 @@ public class PizzaPlaceImpl implements PizzaPlace {
 
 	@Override
 	public boolean equals(Object o){
-		if (o.getClass() != this.getClass())
+		if (o == null || o.getClass() != this.getClass())
 			return false;
 
 		PizzaPlaceImpl lhs = this;
@@ -45,7 +45,7 @@ public class PizzaPlaceImpl implements PizzaPlace {
 		String menu_string = this.menu.stream().
 				sorted().
 				map(Object::toString).
-				collect(Collectors.joining(",")).toString();
+				collect(Collectors.joining(", ")).toString();
 		String res = String.format("PizzaPlace: %s.\n" +
 				"Id: %d.\n" +
 				"Distance: %d.\n" +
