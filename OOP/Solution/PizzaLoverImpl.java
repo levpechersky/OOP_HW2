@@ -2,6 +2,8 @@ package OOP.Solution;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.TreeSet;
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -24,17 +26,20 @@ public class PizzaLoverImpl implements PizzaLover {
     // 1. Rating
     // 2. Dist
     // 3. ID (going up)
-    private class RateComparator implements Comparator {
+    private class RateComparator implements Comparator<PizzaPlace> {
         public int compare(PizzaPlace pp1, PizzaPlace pp2) {
-            if(pp1.averageRating() == pp2.averageRating()) {
+			Integer id1 = pp1.getId(), id2 = pp2.getId();
+			Integer dist1 = pp1.distance(), dist2 = pp2.distance();
+			Double rating1 = pp1.averageRating(), rating2 = pp2.averageRating();
+			if(pp1.averageRating() == pp2.averageRating()) {
                 if(pp1.distance() == pp2.distance()) {
-                    return pp1.getId().compareTo(pp2.getId());
+                    return id1.compareTo(id2);
                 }
                 else
-                    return pp1.distance().compareTo(pp2.distance());
+                    return dist1.compareTo(dist2);
             }
             else
-                return pp1.averageRating().compareTo(pp2.averageRating());
+                return rating1.compareTo(rating2);
         }
     }
 
@@ -42,21 +47,24 @@ public class PizzaLoverImpl implements PizzaLover {
     // 1. Dist
     // 2. Rating
     // 3. ID (going up)
-    private class DistComparator implements Comparator {
+    private class DistComparator implements Comparator<PizzaPlace> {
         public int compare(PizzaPlace pp1, PizzaPlace pp2) {
+        	Integer id1 = pp1.getId(), id2 = pp2.getId();
+        	Integer dist1 = pp1.distance(), dist2 = pp2.distance();
+        	Double rating1 = pp1.averageRating(), rating2 = pp2.averageRating();
             if(pp1.distance() == pp2.distance()) {
                 if(pp1.averageRating() == pp2.averageRating()) {
-                    return pp1.getId().compareTo(pp2.getId());
+                    return id1.compareTo(id2);
                 }
                 else
-                    return pp1.averageRating().compareTo(pp2.averageRating());
+                    return rating1.compareTo(rating2);
             }
             else
-                return pp1.distance().compareTo(pp2.distance());
+                return dist1.compareTo(dist2);
         }
     }
 
-    private class PlaceNameComparator implements Comparator {
+    private class PlaceNameComparator implements Comparator<PizzaPlace> {
         public int compare(PizzaPlace pp1, PizzaPlace pp2) {
             return pp1.compareTo(pp2);
         }
@@ -72,7 +80,6 @@ public class PizzaLoverImpl implements PizzaLover {
 
     @Override
     public int getId() {
-        // TODO Auto-generated method stub
         return this._id;
     }
 
@@ -117,12 +124,13 @@ public class PizzaLoverImpl implements PizzaLover {
         DistComparator dist_comparer = new DistComparator();
         Comparator<PizzaPlace> byDist = 
             ((pp1, pp2) -> dist_comparer.compare(pp1, pp2));
-        return _favorite_places.stream().sorted(byDist).collect(collectors.toList());
+        return _favorite_places.stream().sorted(byDist).collect(Collectors.toList());
     }
 
     @Override
     public int compareTo(PizzaLover arg0) {
-        return this._id.compareTo(arg0.getId());
+    	Integer id = this._id, other_id = arg0.getId();
+        return id.compareTo(other_id);
     }
 
     @Override
@@ -130,16 +138,17 @@ public class PizzaLoverImpl implements PizzaLover {
         if(!(o instanceof PizzaLoverImpl)) {
             return false;
         }
-        PizzaLoverImpl other = PizzaLoverImpl(o);
+        PizzaLoverImpl other = (PizzaLoverImpl)o;
         return this._id == other.getId();
     }
 
     private String favoritesToString(String delimiter) {
+    	int i;
         String accumulate = "";
-        if(this._favorite_places.size == 0)
+        if(this._favorite_places.size() == 0)
             return "";
         List<PizzaPlace> fav_places = new ArrayList<PizzaPlace>(this._favorite_places);
-        for(int i = 0; i < fav_places.size() - 1; i++) {
+        for(i = 0; i < fav_places.size() - 1; i++) {
             accumulate += fav_places.get(i);
             accumulate += ", ";
         }
@@ -150,7 +159,7 @@ public class PizzaLoverImpl implements PizzaLover {
     @Override
     public String toString() {
         String row1 = "Pizza lover: " + this._name + ".\n";
-        String row2 = "Id: " + this._id = ".\n";
+        String row2 = "Id: " + this._id + ".\n";
         String row3 = "Favorites: " + favoritesToString(", ");
         return row1 + row2 + row3;
     }
