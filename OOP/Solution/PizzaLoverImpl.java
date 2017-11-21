@@ -119,6 +119,7 @@ public class PizzaLoverImpl implements PizzaLover {
         RateComparator rate_comparer = new RateComparator();
         Comparator<PizzaPlace> byRating = 
             ((pp1, pp2) -> rate_comparer.compare(pp1, pp2));
+        //Add predicate to take rLimit into consideration.
         return _favorite_places.stream().sorted(byRating).collect(Collectors.toList());
     }
 
@@ -127,6 +128,7 @@ public class PizzaLoverImpl implements PizzaLover {
         DistComparator dist_comparer = new DistComparator();
         Comparator<PizzaPlace> byDist = 
             ((pp1, pp2) -> dist_comparer.compare(pp1, pp2));
+        //Add predicate to take dLimit into consideration.
         return _favorite_places.stream().sorted(byDist).collect(Collectors.toList());
     }
 
