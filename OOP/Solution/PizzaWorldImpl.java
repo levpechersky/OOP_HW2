@@ -16,8 +16,8 @@ import OOP.Provided.PizzaWorld;
 public class PizzaWorldImpl implements PizzaWorld {
 
 	private SortedMap<int, PizzaLover> _system_users;
-	//private Set<PizzaPlace> _system_places;
 	private SortedMap<PizzaLover, Set<PizzaLover>> _user_connections;
+    //private Set<PizzaPlace> _system_places;
 
 	private class LoverComparator {
 	    public int compare(PizzaLover pl1, PizzaLover pl2) {
@@ -58,7 +58,7 @@ public class PizzaWorldImpl implements PizzaWorld {
 
     @Override
     public Collection<PizzaLover> registeredPizzaLovers() {
-        return this._system_users.values();
+	    return this._system_users.values();
     }
 
     @Override
@@ -105,7 +105,7 @@ public class PizzaWorldImpl implements PizzaWorld {
             throws PizzaLoverNotInSystemException {
 	    if(this._system_users.get(pl.getId()) == null)
 	        throw new PizzaLoverNotInSystemException();
-        return this._system_users.get(pl.getId()).favoritesByRating(-1);
+	    return null;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class PizzaWorldImpl implements PizzaWorld {
             throws PizzaLoverNotInSystemException {
         if(this._system_users.get(pl.getId()) == null)
             throw new PizzaLoverNotInSystemException();
-        return this._system_users.get(pl.getId().favoritesByDist(Integer.MAX_VALUE));
+        return null;
     }
 
     @Override
