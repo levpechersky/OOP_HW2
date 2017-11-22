@@ -169,7 +169,7 @@ public class PizzaLoverImpl implements PizzaLover {
         List<PizzaPlace> fav_places = new ArrayList<PizzaPlace>(this._favorite_places);
         for(i = 0; i < fav_places.size() - 1; i++) {
             accumulate += ((PizzaPlaceImpl)(fav_places.get(i))).getName();
-            accumulate += ", ";
+            accumulate += delimiter;
         }
         accumulate += fav_places.get(i);
         return accumulate;

@@ -45,7 +45,7 @@ public class PizzaPlaceImpl implements PizzaPlace {
 		String menu_string = this.menu.stream().
 				sorted().
 				map(Object::toString).
-				collect(Collectors.joining(", ")).toString();
+				collect(Collectors.joining(", "));
 		String res = String.format("PizzaPlace: %s.\n" +
 				"Id: %d.\n" +
 				"Distance: %d.\n" +
@@ -68,7 +68,7 @@ public class PizzaPlaceImpl implements PizzaPlace {
 		if (r < 0 || r > 5)
 			throw new RateRangeException();
 
-		ratings.put(pl, new Integer(r)); // puts new value or replaces an old one
+		ratings.put(pl, r); // puts new value or replaces an old one
 		return this;
 	}
 

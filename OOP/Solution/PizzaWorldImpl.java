@@ -1,6 +1,11 @@
 package OOP.Solution;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.Comparator;
 
 
 import OOP.Provided.PizzaLover;
@@ -40,7 +45,7 @@ public class PizzaWorldImpl implements PizzaWorld {
     @Override
     public PizzaLover joinNetwork(int id, String name)
             throws PizzaLoverAlreadyInSystemException {
-        if(_system_users.containsKey(new Integer(id)))
+        if(_system_users.containsKey(id))
             throw new PizzaLoverAlreadyInSystemException();
         PizzaLover lover = new PizzaLoverImpl(id, name);
         //Add new lover to the system.
