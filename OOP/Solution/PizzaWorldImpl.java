@@ -116,12 +116,38 @@ public class PizzaWorldImpl implements PizzaWorld {
         return null;
     }
 
+    //This method uses a Set and recursion to run a DFS on all friends.
+    private boolean getRecommendation_aux(Set<PizzaLover> checked, PizzaLover pl,
+                                          PizzaPlace pp, int t) {
+        if(checked.contains(pl))
+            return false;
+	    if(t == 0)
+            return pl.favorites().contains(pp);
+        if(p1.favorites().contains(pp))
+            return true;
+        checked.add(pl);
+        boolean found = false;
+        for(PizzaLover other : this._system_users.get(pl)) {
+            found |= getRecommendation(otehr, pp, t-1);
+            if(found == true)
+                break;
+        }
+        return found;
+    }
+
     @Override
     public boolean getRecommendation(PizzaLover pl, PizzaPlace pp, int t)
             throws PizzaLoverNotInSystemException,
             PizzaPlaceNotInSystemException, ImpossibleConnectionException {
-        // TODO Auto-generated method stub
-        return false;
+        if(this._system_users.get(pl.getId()) == null)
+            throw new PizzaLoverNotInSystemException();
+        if(false /* Place not in system */)
+            throw new PizzaPlaceNotInSystemException();
+        if(t < 0)
+            throw new ImpossibleConnectionException();
+        Set<PizzaLover> checked = new TreeSet<PizzaLover>();
+        boolean found = getRecommendation_aux(checked, pl, pp, t);
+        return found;
     }
 
 }

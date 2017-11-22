@@ -94,9 +94,9 @@ public class PizzaLoverImpl implements PizzaLover {
     @Override
     public PizzaLover favorite(PizzaPlace pp)
             throws UnratedFavoritePizzaPlaceException {
-    	// TODO: Currently, I can't see a way to do this (we can't add methods to interface)
-//        if(!(pp.wasRatedBy(this)))
-//            throw new UnratedFavoritePizzaPlaceException();
+        PizzaPlaceImpl place = (PizzaPlaceImpl)(pp);
+        if(!(place.wasRatedBy(this)))
+            throw new UnratedFavoritePizzaPlaceException();
         this._favorite_places.add(pp);
         return this;
     }
@@ -166,7 +166,7 @@ public class PizzaLoverImpl implements PizzaLover {
             return "";
         List<PizzaPlace> fav_places = new ArrayList<PizzaPlace>(this._favorite_places);
         for(i = 0; i < fav_places.size() - 1; i++) {
-            accumulate += fav_places.get(i);
+            accumulate += ((PizzaPlaceImpl)(fav_places.get(i))).getName();
             accumulate += ", ";
         }
         accumulate += fav_places.get(i);
