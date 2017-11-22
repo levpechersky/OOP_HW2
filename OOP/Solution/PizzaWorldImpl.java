@@ -22,7 +22,7 @@ public class PizzaWorldImpl implements PizzaWorld {
 
 	private SortedMap<Integer, PizzaLover> _system_users;
 	private SortedMap<PizzaLover, Set<PizzaLover>> _user_connections;
-    //private Set<PizzaPlace> _system_places;
+    private SortedMap<Integer, PizzaPlace> _system_places; // id -> PizzaPlace
 
 	private class LoverComparator implements Comparator<PizzaLover> {
 	    public int compare(PizzaLover pl1, PizzaLover pl2) {
@@ -38,8 +38,8 @@ public class PizzaWorldImpl implements PizzaWorld {
 
     public PizzaWorldImpl() {
 	    this._system_users = new TreeMap<>();
-	    this._user_connections = new TreeMap<>(new PizzaWorldImpl.LoverComparator());
-	    //this._system_places = new TreeSet<PizzaPlace>(new PlaceComparator());
+	    this._user_connections = new TreeMap<>(new LoverComparator());
+	    this._system_places = new TreeMap<>();
     }
 
     @Override
@@ -51,15 +51,19 @@ public class PizzaWorldImpl implements PizzaWorld {
         //Add new lover to the system.
         this._system_users.put(id, lover);
         //Add lover to connections map, with empty set of connections.
-        this._user_connections.put(lover, new TreeSet(new PizzaWorldImpl.LoverComparator()));
+        this._user_connections.put(lover, new TreeSet(new LoverComparator()));
         return lover;
     }
 
     @Override
     public PizzaPlace addPizzaPlace(int id, String name, int dist,
             Set<String> menu) throws PizzaPlaceAlreadyInSystemException {
-        // TODO Auto-generated method stub
-        return null;
+		if (this._system_places.containsKey(id))
+			throw new PizzaPlaceAlreadyInSystemException();
+
+		PizzaPlace newPlace = new PizzaPlaceImpl(id, name, dist, menu);
+   		this._system_places.put(id, newPlace);
+        return newPlace;
     }
 
     @Override
@@ -69,8 +73,8 @@ public class PizzaWorldImpl implements PizzaWorld {
 
     @Override
     public Collection<PizzaPlace> registeredPizzaPlaces() {
-        // TODO Auto-generated method stub
-        return null;
+		// return a copy, stay on the safe side
+        return new TreeSet<>(this._system_places.values());
     }
 
     @Override
@@ -84,8 +88,11 @@ public class PizzaWorldImpl implements PizzaWorld {
     @Override
     public PizzaPlace getPizzaPlace(int id)
             throws PizzaPlaceNotInSystemException {
-        // TODO Auto-generated method stub
-        return null;
+        PizzaPlace pp = this._system_places.get(id);
+        if (pp == null)
+        	throw new PizzaPlaceNotInSystemException();
+
+        return pp;
     }
 
     @Override
@@ -111,7 +118,7 @@ public class PizzaWorldImpl implements PizzaWorld {
             throws PizzaLoverNotInSystemException {
 	    if(this._system_users.get(pl.getId()) == null)
 	        throw new PizzaLoverNotInSystemException();
-	    return null;
+	    return null; // TODO
     }
 
     @Override
@@ -119,7 +126,7 @@ public class PizzaWorldImpl implements PizzaWorld {
             throws PizzaLoverNotInSystemException {
         if(this._system_users.get(pl.getId()) == null)
             throw new PizzaLoverNotInSystemException();
-        return null;
+        return null; // TODO
     }
 
     //This method uses a Set and recursion to run a DFS on all friends.
