@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.TreeSet;
 import java.util.Comparator;
 import java.util.stream.Collectors;
+import java.util.function.Predicate;
+
 
 import OOP.Provided.PizzaLover;
 import OOP.Provided.PizzaPlace;
@@ -129,8 +131,8 @@ public class PizzaLoverImpl implements PizzaLover {
             ((pp1, pp2) -> rate_comparer.compare(pp1, pp2));
         return _favorite_places.stream()
                 .sorted(byRating)
-                .collect(Collectors.toList()
-                .filter(new withinRate(rLimit)));
+                .filter(withinRate(rLimit))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -140,8 +142,8 @@ public class PizzaLoverImpl implements PizzaLover {
             ((pp1, pp2) -> dist_comparer.compare(pp1, pp2));
         return _favorite_places.stream()
                 .sorted(byDist)
-                .collect(Collectors.toList())
-                .filter(new withinDist(dLimit));
+                .filter(withinDist(dLimit))
+                .collect(Collectors.toList());
     }
 
     @Override

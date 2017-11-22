@@ -19,7 +19,7 @@ public class PizzaPlaceImpl implements PizzaPlace {
 		this.id = id;
 		this.name = name;
 		this.distFromTech = distFromTech;
-		this.menu = new HashSet<String>(menu); // copy set
+		this.menu = new HashSet<>(menu); // copy set
 		this.ratings = new TreeMap<>();
 	}
 
@@ -86,4 +86,11 @@ public class PizzaPlaceImpl implements PizzaPlace {
 		return ratings_sum / this.numberOfRates();
 	}
 
+	public boolean wasRatedBy(PizzaLover pizzaLover) {
+		return ratings.containsKey(pizzaLover);
+	}
+
+	public String getName() {
+		return name;
+	}
 }
