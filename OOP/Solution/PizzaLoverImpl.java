@@ -158,7 +158,7 @@ public class PizzaLoverImpl implements PizzaLover {
             return false;
         }
         PizzaLoverImpl other = (PizzaLoverImpl)o;
-        return this._id == other.getId();
+        return (this.compareTo(other) == 0 && other.compareTo(this) == 0);
     }
 
     private String favoritesToString(String delimiter) {
