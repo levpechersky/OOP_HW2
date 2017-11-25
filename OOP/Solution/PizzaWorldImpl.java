@@ -120,6 +120,7 @@ public class PizzaWorldImpl implements PizzaWorld {
 
         for (PizzaLover friend : pl.getFriends()){
             List<PizzaPlace> appendix = friend.favoritesByRating(1).stream()
+                    .sorted()
                     .filter(x -> !alreadySeen.contains(x))
                     .collect(Collectors.toList());
             result.addAll(appendix);
@@ -139,6 +140,7 @@ public class PizzaWorldImpl implements PizzaWorld {
 
         for (PizzaLover friend : pl.getFriends()){
             List<PizzaPlace> appendix = friend.favoritesByDist(0).stream()
+                    .sorted()
                     .filter(x -> !alreadySeen.contains(x))
                     .collect(Collectors.toList());
             result.addAll(appendix);
