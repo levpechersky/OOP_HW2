@@ -1,4 +1,4 @@
-package OOP.Solution;
+package OOP.Tests;
 
 import OOP.Provided.PizzaLover;
 import OOP.Provided.PizzaLover.ConnectionAlreadyExistsException;
@@ -89,7 +89,7 @@ public class Program {
 				System.out.println("Error checking equals.1");
 				System.exit(1);
 			}
-			boolean b = pp1.equals(pp2);
+			b = pp1.equals(pp2);
 			if(b == false) {
 				System.out.println("Error checking equals.2");
 				System.exit(1);	
@@ -99,7 +99,7 @@ public class Program {
 		}
 		try {
 			String x = pp1.toString();
-			if(x.length <= 0) {
+			if(x.length() <= 0) {
 				System.out.println("Error checking toString.1");
 				System.exit(1);
 			}
@@ -171,7 +171,7 @@ public class Program {
 			System.exit(1);
 		}
 		try {
-			Collection<PizzaLover> col = pl1.favoritesByRating(Integer.INT_MAX);
+			Collection<PizzaLover> col = pl1.favoritesByRating(Integer.MAX_VALUE);
 			if(col.size() > 0) {
 				System.out.println("Error checking favoritesByRating.1");
 				System.exit(1);
@@ -207,7 +207,7 @@ public class Program {
 		}
 		try {
 			String x = pl1.toString();
-			if(x.length <= 0) {
+			if(x.length() <= 0) {
 				System.out.println("Error checking toString.1");
 				System.exit(1);
 			}
@@ -314,7 +314,7 @@ public class Program {
 		}
 		try {
 			String x = world1.toString();
-			if(x.length <= 0) {
+			if(x.length() <= 0) {
 				System.out.println("Error checking toString.1");
 				System.exit(1);
 			}
@@ -385,7 +385,7 @@ public class Program {
 		}
 		pl1.favorite(pp1); pl2.favorite(pp1); pl3.favorite(pp1);
 		boolean test6 = (pl1.favorites().contains(pp1) && pl2.favorites().contains(pp1) && pl3.favorites().contains(pp1));
-		boolean test7 = !(pl1.favorites.contains(pp2) || pl2.favorites.contains(pp2) || pl3.favorites.contains(pp2));
+		boolean test7 = !(pl1.favorites().contains(pp2) || pl2.favorites.contains(pp2) || pl3.favorites.contains(pp2));
 		if(!test6) {
 			System.out.println("Error test6");
 			System.exit(1);
