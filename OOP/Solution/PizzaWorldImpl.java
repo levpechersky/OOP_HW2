@@ -1,11 +1,7 @@
 package OOP.Solution;
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.Comparator;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 import OOP.Provided.PizzaLover;
@@ -24,21 +20,21 @@ public class PizzaWorldImpl implements PizzaWorld {
 	private SortedMap<PizzaLover, Set<PizzaLover>> _user_connections;
     private SortedMap<Integer, PizzaPlace> _system_places; // id -> PizzaPlace
 
-	private class LoverComparator implements Comparator<PizzaLover> {
-	    public int compare(PizzaLover pl1, PizzaLover pl2) {
-	        return pl1.compareTo(pl2);
-        }
-    }
-
-    private class PlaceComparator implements Comparator<PizzaPlace>  {
-	    public int compare(PizzaPlace pp1, PizzaPlace pp2) {
-	        return pp1.compareTo(pp2);
-        }
-    }
+//	private class LoverComparator implements Comparator<PizzaLover> {
+//	    public int compare(PizzaLover pl1, PizzaLover pl2) {
+//	        return pl1.compareTo(pl2);
+//        }
+//    }
+//
+//    private class PlaceComparator implements Comparator<PizzaPlace>  {
+//	    public int compare(PizzaPlace pp1, PizzaPlace pp2) {
+//	        return pp1.compareTo(pp2);
+//        }
+//    }
 
     public PizzaWorldImpl() {
 	    this._system_users = new TreeMap<>();
-	    this._user_connections = new TreeMap<>(new LoverComparator());
+	    this._user_connections = new TreeMap<>();
 	    this._system_places = new TreeMap<>();
     }
 
@@ -51,7 +47,7 @@ public class PizzaWorldImpl implements PizzaWorld {
         //Add new lover to the system.
         this._system_users.put(id, lover);
         //Add lover to connections map, with empty set of connections.
-        this._user_connections.put(lover, new TreeSet(new LoverComparator()));
+        this._user_connections.put(lover, new TreeSet<>());
         return lover;
     }
 
@@ -118,7 +114,18 @@ public class PizzaWorldImpl implements PizzaWorld {
             throws PizzaLoverNotInSystemException {
 	    if(this._system_users.get(pl.getId()) == null)
 	        throw new PizzaLoverNotInSystemException();
-	    return null; // TODO
+
+        SortedSet<PizzaPlace> alreadySeen = new TreeSet<>();
+        List<PizzaPlace> result = new ArrayList<>();
+
+        for (PizzaLover friend : pl.getFriends()){
+            List<PizzaPlace> appendix = friend.favoritesByRating(1).stream()
+                    .filter(x -> !alreadySeen.contains(x))
+                    .collect(Collectors.toList());
+            result.addAll(appendix);
+            alreadySeen.addAll(appendix);
+        }
+        return result;
     }
 
     @Override
@@ -126,7 +133,18 @@ public class PizzaWorldImpl implements PizzaWorld {
             throws PizzaLoverNotInSystemException {
         if(this._system_users.get(pl.getId()) == null)
             throw new PizzaLoverNotInSystemException();
-        return null; // TODO
+
+        SortedSet<PizzaPlace> alreadySeen = new TreeSet<>();
+        List<PizzaPlace> result = new ArrayList<>();
+
+        for (PizzaLover friend : pl.getFriends()){
+            List<PizzaPlace> appendix = friend.favoritesByDist(0).stream()
+                    .filter(x -> !alreadySeen.contains(x))
+                    .collect(Collectors.toList());
+            result.addAll(appendix);
+            alreadySeen.addAll(appendix);
+        }
+        return result;
     }
 
     //This method uses a Set and recursion to run a DFS on all friends.
