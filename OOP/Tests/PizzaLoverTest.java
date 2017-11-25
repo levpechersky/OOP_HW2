@@ -68,7 +68,7 @@ public class PizzaLoverTest {
         try {
             lover.favorite(p1).favorite(p2).favorite(p3);
         } catch (PizzaLover.UnratedFavoritePizzaPlaceException e){
-            fail("PiizPlace was rated, but Unrated exception still thrown");
+            fail("PizzaPlace was rated, but Unrated exception still thrown");
         }
 
         Collection actualFavs = lover.favorites();
@@ -323,6 +323,12 @@ public class PizzaLoverTest {
                 "Id: 12345.\n" +
                 "Favorites: Dominos, Hut, Italiano.";
         assertEquals(lover.toString(), expectedStr);
+
+        PizzaLover Donatello = new PizzaLoverImpl(23456, "Donatello");
+        expectedStr = "Pizza lover: Donatello.\n" +
+                "Id: 23456.\n" +
+                "Favorites: .";
+        assertEquals(Donatello.toString(), expectedStr);
     }
 
 }

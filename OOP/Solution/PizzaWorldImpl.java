@@ -1,6 +1,7 @@
 package OOP.Solution;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 
@@ -19,18 +20,6 @@ public class PizzaWorldImpl implements PizzaWorld {
 	private SortedMap<Integer, PizzaLover> _system_users;
 	private SortedMap<PizzaLover, Set<PizzaLover>> _user_connections;
     private SortedMap<Integer, PizzaPlace> _system_places; // id -> PizzaPlace
-
-//	private class LoverComparator implements Comparator<PizzaLover> {
-//	    public int compare(PizzaLover pl1, PizzaLover pl2) {
-//	        return pl1.compareTo(pl2);
-//        }
-//    }
-//
-//    private class PlaceComparator implements Comparator<PizzaPlace>  {
-//	    public int compare(PizzaPlace pp1, PizzaPlace pp2) {
-//	        return pp1.compareTo(pp2);
-//        }
-//    }
 
     public PizzaWorldImpl() {
 	    this._system_users = new TreeMap<>();
@@ -100,11 +89,11 @@ public class PizzaWorldImpl implements PizzaWorld {
         else if(this._system_users.get(pl1.getId()) == null
                 || this._system_users.get(pl2.getId()) == null)
             throw new PizzaLoverNotInSystemException();
-        else if(this._user_connections.get(pl1.getId()).contains(pl2))
+        else if(this._user_connections.get(pl1).contains(pl2))
             throw new ConnectionAlreadyExistsException();
         else {
             this._user_connections.get(pl1).add(pl2);
-            this._user_connections.get(pl2).add(pl1);
+            //this._user_connections.get(pl2).add(pl1); // friendship here isn't symmetric
             return this;
         }
     }
@@ -120,7 +109,6 @@ public class PizzaWorldImpl implements PizzaWorld {
 
         for (PizzaLover friend : pl.getFriends()){
             List<PizzaPlace> appendix = friend.favoritesByRating(1).stream()
-                    .sorted()
                     .filter(x -> !alreadySeen.contains(x))
                     .collect(Collectors.toList());
             result.addAll(appendix);
@@ -139,8 +127,7 @@ public class PizzaWorldImpl implements PizzaWorld {
         List<PizzaPlace> result = new ArrayList<>();
 
         for (PizzaLover friend : pl.getFriends()){
-            List<PizzaPlace> appendix = friend.favoritesByDist(0).stream()
-                    .sorted()
+            List<PizzaPlace> appendix = friend.favoritesByDist(Integer.MAX_VALUE).stream()
                     .filter(x -> !alreadySeen.contains(x))
                     .collect(Collectors.toList());
             result.addAll(appendix);
@@ -184,4 +171,35 @@ public class PizzaWorldImpl implements PizzaWorld {
         return found;
     }
 
+    private String friendshipToString(PizzaLover user, Set<PizzaLover> friends) {
+        int id = user.getId();
+        String friends_str = friends.stream()
+                .sorted()
+                .map(PizzaLover::getId)
+                .map(integer -> integer.toString())
+                .collect(Collectors.joining(", "));
+        return String.format("%d -> [%s]", id, friends_str);
+    }
+
+    @Override
+    public String toString() {
+        String lovers_str = this._system_users.keySet().stream()
+                .sorted()
+                .map(integer -> integer.toString())
+                .collect(Collectors.joining(", "));
+        String places_str = this._system_places.keySet().stream()
+                .sorted()
+                .map(integer -> integer.toString())
+                .collect(Collectors.joining(", "));
+
+        StringBuilder friendship_str = new StringBuilder();
+        for (PizzaLover user : this._user_connections.keySet())
+            friendship_str.append(friendshipToString(user, this._user_connections.get(user)) + ".\n");
+
+        return String.format("Registered pizza lovers: %s.\n" +
+                "Registered pizza places: %s.\n" +
+                "Pizza lovers:\n" +
+                "%s" +
+                "End pizza lovers.", lovers_str, places_str, friendship_str);
+    }
 }
