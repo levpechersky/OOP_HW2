@@ -41,7 +41,7 @@ public class PizzaLoverImpl implements PizzaLover {
                     return dist1.compareTo(dist2);
             }
             else
-                return rating1.compareTo(rating2);
+                return -1 * rating1.compareTo(rating2); // -1 for descending order
         }
     }
 
@@ -59,7 +59,7 @@ public class PizzaLoverImpl implements PizzaLover {
                     return id1.compareTo(id2);
                 }
                 else
-                    return rating1.compareTo(rating2);
+                    return -1 * rating1.compareTo(rating2); // -1 for descending order
             }
             else
                 return dist1.compareTo(dist2);
@@ -73,11 +73,11 @@ public class PizzaLoverImpl implements PizzaLover {
     }
 
     private Predicate<PizzaPlace> withinDist(int dLimit) {
-        return pp -> ((dLimit == -1) ? true : (pp.distance() < dLimit));
+        return pp -> ((dLimit == -1) ? true : (pp.distance() <= dLimit));
     }
 
     private Predicate<PizzaPlace> withinRate(int rLimit) {
-        return pp -> (pp.averageRating() > rLimit);
+        return pp -> (pp.averageRating() >= rLimit);
     }
 
     public PizzaLoverImpl(int id, String name) {
@@ -126,23 +126,17 @@ public class PizzaLoverImpl implements PizzaLover {
 
     @Override
     public Collection<PizzaPlace> favoritesByRating(int rLimit) {
-        RateComparator rate_comparer = new RateComparator();
-        Comparator<PizzaPlace> byRating = 
-            ((pp1, pp2) -> rate_comparer.compare(pp1, pp2));
         return _favorite_places.stream()
-                .sorted(byRating)
                 .filter(withinRate(rLimit))
+                .sorted(new RateComparator())
                 .collect(Collectors.toList());
     }
 
     @Override
     public Collection<PizzaPlace> favoritesByDist(int dLimit) {
-        DistComparator dist_comparer = new DistComparator();
-        Comparator<PizzaPlace> byDist = 
-            ((pp1, pp2) -> dist_comparer.compare(pp1, pp2));
         return _favorite_places.stream()
-                .sorted(byDist)
                 .filter(withinDist(dLimit))
+                .sorted(new DistComparator())
                 .collect(Collectors.toList());
     }
 
@@ -162,25 +156,17 @@ public class PizzaLoverImpl implements PizzaLover {
     }
 
     private String favoritesToString(String delimiter) {
-    	int i;
-        String accumulate = "";
-        if(this._favorite_places.size() == 0)
-            return "";
-        List<PizzaPlace> fav_places = new ArrayList<PizzaPlace>(this._favorite_places);
-        for(i = 0; i < fav_places.size() - 1; i++) {
-            accumulate += ((PizzaPlaceImpl)(fav_places.get(i))).getName();
-            accumulate += delimiter;
-        }
-        accumulate += fav_places.get(i);
-        return accumulate;
+        return this._favorite_places.stream()
+                .map(pp -> ((PizzaPlaceImpl)pp).getName())
+                .sorted()
+                .collect(Collectors.joining(delimiter));
     }
 
     @Override
     public String toString() {
         String row1 = "Pizza lover: " + this._name + ".\n";
         String row2 = "Id: " + this._id + ".\n";
-        String row3 = "Favorites: " + favoritesToString(", ");
+        String row3 = "Favorites: " + favoritesToString(", ") + ".";
         return row1 + row2 + row3;
     }
-
 }
