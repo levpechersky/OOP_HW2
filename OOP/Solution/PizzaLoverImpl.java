@@ -121,7 +121,7 @@ public class PizzaLoverImpl implements PizzaLover {
 
     @Override
     public Set<PizzaLover> getFriends() {
-        return this._user_friends;
+        return new TreeSet<>(this._user_friends); // stay safe, return a copy
     }
 
     @Override

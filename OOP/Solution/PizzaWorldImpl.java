@@ -16,7 +16,7 @@ import OOP.Provided.PizzaWorld;
 
 public class PizzaWorldImpl implements PizzaWorld {
 
-	private SortedMap<Integer, PizzaLover> _system_users;
+	private SortedMap<Integer, PizzaLover> _system_users; // id -> PizzaLover
 	private SortedMap<PizzaLover, Set<PizzaLover>> _user_connections;
     private SortedMap<Integer, PizzaPlace> _system_places; // id -> PizzaPlace
 
@@ -52,7 +52,7 @@ public class PizzaWorldImpl implements PizzaWorld {
 
     @Override
     public Collection<PizzaLover> registeredPizzaLovers() {
-	    return this._system_users.values();
+	    return new TreeSet<>(this._system_users.values());
     }
 
     @Override
@@ -83,19 +83,17 @@ public class PizzaWorldImpl implements PizzaWorld {
     public PizzaWorld addConnection(PizzaLover pl1, PizzaLover pl2)
             throws PizzaLoverNotInSystemException,
             ConnectionAlreadyExistsException, SamePizzaLoverException {
-        if(pl1.equals(pl2))
+        if (pl1.equals(pl2))
             throw new SamePizzaLoverException();
-        else if(this._system_users.get(pl1.getId()) == null
-                || this._system_users.get(pl2.getId()) == null)
+        if (this._system_users.get(pl1.getId()) == null || this._system_users.get(pl2.getId()) == null)
             throw new PizzaLoverNotInSystemException();
-        else if(this._user_connections.get(pl1).contains(pl2))
+        if (this._user_connections.get(pl1).contains(pl2))
             throw new ConnectionAlreadyExistsException();
-        else {
-            // Note: friendship here isn't symmetric
-            this._user_connections.get(pl1).add(pl2);
-            pl1.addFriend(pl2);
-            return this;
-        }
+
+        // Note: friendship isn't symmetric
+        this._user_connections.get(pl1).add(pl2);
+        pl1.addFriend(pl2);
+        return this;
     }
 
     @Override
@@ -162,13 +160,13 @@ public class PizzaWorldImpl implements PizzaWorld {
             PizzaPlaceNotInSystemException, ImpossibleConnectionException {
         if(this._system_users.get(pl.getId()) == null)
             throw new PizzaLoverNotInSystemException();
-        if(false /* Place not in system */)
+        if(!this._system_places.containsKey(pp.getId()))
             throw new PizzaPlaceNotInSystemException();
         if(t < 0)
             throw new ImpossibleConnectionException();
-        Set<PizzaLover> checked = new TreeSet<PizzaLover>();
-        boolean found = getRecommendation_aux(checked, pl, pp, t);
-        return found;
+
+        Set<PizzaLover> checked = new TreeSet<>();
+        return getRecommendation_aux(checked, pl, pp, t);
     }
 
     private String friendshipToString(PizzaLover user, Set<PizzaLover> friends) {

@@ -26,32 +26,16 @@ public class PizzaWorldTest {
 			"Calzone", "Fries", "Onion rings", "Coca-cola", "Cola zero"
 	));
 
-	private final double epsilon = 0.00001;
+	private final double epsilon = 0.00001; // for double comparisons
 
-
-
-	// I want to be able to access those anywhere:
+	// Users and PizzaPlaces. I want to be able to access those anywhere:
 	private PizzaPlace italiano = null, pizzaHut = null, dominos = null, pizzaBad = null,
             pizzaRat = null, pizzaWhat = null, nuna = null;
 	private PizzaLover leonardo = null, donatello = null, michelangelo = null, rafael = null,
             splinter = null, shredder = null, krang = null, student = null, foreverAlone=null;
 
-    private void populateWorld(PizzaWorld world){
-        try { // Let's add places:
-            italiano  = world.addPizzaPlace(40, "Italiano", 125, traditional_pizzas);
-            pizzaHut  = world.addPizzaPlace(50, "Pizza Hut", 15, veggie_topping_pizzas);
-            dominos   = world.addPizzaPlace(60, "Dominos", 650, meat_topping_pizzas);
 
-            // Note, that following 3 are at the same distance from Technion:
-            pizzaBad  = world.addPizzaPlace(10, "Pizza Bad", 350, complements);
-            pizzaRat  = world.addPizzaPlace(20, "Pizza Rat", 350, traditional_pizzas);
-            pizzaWhat = world.addPizzaPlace(30, "Pizza What?", 350, meat_topping_pizzas);
-
-            nuna      = world.addPizzaPlace(70, "Nuna", 40, veggie_topping_pizzas);
-        } catch (PizzaPlaceAlreadyInSystemException e){
-            fail();
-        }
-
+    private void addUsers(PizzaWorld world){
         try { // Now add users:
             leonardo     = world.joinNetwork(12345, "Leonardo");
             donatello    = world.joinNetwork(23456, "Donatello");
@@ -71,7 +55,32 @@ public class PizzaWorldTest {
         }
         // check setup:
         assertEquals(9, world.registeredPizzaLovers().size());
+    }
+
+    private void addPlaces(PizzaWorld world){
+        try { // Let's add places:
+            italiano  = world.addPizzaPlace(40, "Italiano", 125, traditional_pizzas);
+            pizzaHut  = world.addPizzaPlace(50, "Pizza Hut", 15, veggie_topping_pizzas);
+            dominos   = world.addPizzaPlace(60, "Dominos", 650, meat_topping_pizzas);
+
+            // Note, that following 3 are at the same distance from Technion:
+            pizzaBad  = world.addPizzaPlace(10, "Pizza Bad", 350, complements);
+            pizzaRat  = world.addPizzaPlace(20, "Pizza Rat", 350, traditional_pizzas);
+            pizzaWhat = world.addPizzaPlace(30, "Pizza What?", 350, meat_topping_pizzas);
+
+            nuna      = world.addPizzaPlace(70, "Nuna", 40, veggie_topping_pizzas);
+        } catch (PizzaPlaceAlreadyInSystemException e){
+            fail();
+        }
+        // check setup:
         assertEquals(7, world.registeredPizzaPlaces().size());
+    }
+
+    private void populateWorld(PizzaWorld world){
+        cleanUpPlacesAndUsers(); // in case someone will forget to clean up.
+
+        addPlaces(world);
+        addUsers(world);
     }
 
     private void cleanUpPlacesAndUsers() {
@@ -146,7 +155,7 @@ public class PizzaWorldTest {
         }
     }
 
-    private void setUpRatings_RatingBased(PizzaWorld world) {
+    private void setUpRatings_FocusOnRating(PizzaWorld world) {
         // Hut and Dominos have same rating, different distance
         // Bad and What have same rating and same distance
         try {
@@ -171,7 +180,7 @@ public class PizzaWorldTest {
             fail();
         }
 
-        // If this fails - you have broken this function:
+        // Check that the setup did what we intended it to do:
         assertEquals(italiano.averageRating(), 4.5, epsilon);
         assertEquals(pizzaHut.averageRating(), 3, epsilon);
         assertEquals(dominos.averageRating(), 3, epsilon);
@@ -180,7 +189,7 @@ public class PizzaWorldTest {
         assertEquals(nuna.averageRating(), 5, epsilon);
     }
 
-    private void setUpRatings_DistBased(PizzaWorld world) {
+    private void setUpRatings_FocusOnDistance(PizzaWorld world) {
         // Hut and Dominos have same rating, different distance
         // Bad, Rat and What have same distance
         // Bad and What also have have same rating
@@ -206,7 +215,7 @@ public class PizzaWorldTest {
             fail();
         }
 
-        // If this fails - you have broken this function:
+        // Check that the setup did what we intended it to do:
         assertEquals(pizzaHut.averageRating(), 4, epsilon);
         assertEquals(dominos.averageRating(), 3, epsilon);
         assertEquals(pizzaRat.averageRating(), 3, epsilon);
@@ -222,14 +231,70 @@ public class PizzaWorldTest {
 		assertTrue(world.registeredPizzaPlaces().isEmpty());
 	}
 
-	@Test
+    @Test
+	public void AddGetLoversTest() {
+        PizzaWorld world = new PizzaWorldImpl();
+
+        addUsers(world);
+
+        Set<PizzaLover> expectedUsers = new TreeSet<>(Arrays.asList(
+                leonardo, donatello, rafael, michelangelo, splinter, shredder, krang, student, foreverAlone
+        ));
+        Collection<PizzaLover> actualUsers = world.registeredPizzaLovers();
+        assertTrue(actualUsers.containsAll(expectedUsers) && expectedUsers.containsAll(actualUsers));
+        try {
+            assertEquals(world.getPizzaLover(rafael.getId()), rafael);
+            assertEquals(world.getPizzaLover(student.getId()), student);
+            assertEquals(world.getPizzaLover(foreverAlone.getId()), foreverAlone);
+        } catch (Exception e){
+            fail();
+        }
+
+        // Now let's check that we've received actualUsers as a copy:
+        actualUsers.clear();
+        actualUsers = world.registeredPizzaLovers();
+        assertTrue(actualUsers.containsAll(expectedUsers) && expectedUsers.containsAll(actualUsers));
+    }
+
+    @Test
+	public void AddGetPlacesTest() {
+        PizzaWorld world = new PizzaWorldImpl();
+
+        addPlaces(world);
+
+        Set<PizzaPlace> expectedPlaces = new TreeSet<>(Arrays.asList(
+                dominos, pizzaHut, pizzaBad, pizzaRat, pizzaWhat, italiano, nuna
+        ));
+        Collection<PizzaPlace> actualPlaces = world.registeredPizzaPlaces();
+        assertTrue(actualPlaces.containsAll(expectedPlaces) &&
+                expectedPlaces.containsAll(actualPlaces));
+        try {
+            assertEquals(world.getPizzaPlace(nuna.getId()), nuna);
+            assertEquals(world.getPizzaPlace(italiano.getId()), italiano);
+            assertEquals(world.getPizzaPlace(pizzaHut.getId()), pizzaHut);
+        } catch (Exception e){
+            fail();
+        }
+
+        // Now let's check that we've received actualPlaces as a copy:
+        actualPlaces.clear();
+        actualPlaces = world.registeredPizzaPlaces();
+        assertTrue(actualPlaces.containsAll(expectedPlaces) && expectedPlaces.containsAll(actualPlaces));
+    }
+
+	/*
+	*  I have 2 setups of ratings - one is more suitable for  favoritesByDist(), and other - for favoritesByRating().
+	*  Anyway, I check both functions with both setups.
+	*/
+
+    @Test
 	public void FavoritesByRatingTest() {
         PizzaWorld world = new PizzaWorldImpl();
 
         populateWorld(world);
         setUpConnections(world);
 
-        setUpRatings_RatingBased(world); // check this in case of failed test
+        setUpRatings_FocusOnRating(world); // check this in case of failed test
 
         Collection<PizzaPlace> actual=null;
         try {
@@ -245,14 +310,36 @@ public class PizzaWorldTest {
         cleanUpPlacesAndUsers();
 	}
 
-	@Test
+    @Test
+    public void FavoritesByDistTest() {
+        PizzaWorld world = new PizzaWorldImpl();
+
+        populateWorld(world);
+        setUpConnections(world);
+        setUpRatings_FocusOnRating(world);
+
+        Collection<PizzaPlace> actual=null;
+        try {
+            actual = world.favoritesByDist(student);
+        } catch (PizzaLover.PizzaLoverNotInSystemException e){
+            fail();
+        }
+        assertFalse("Splinter isn't direct friend of student, Pizza Rat shouldn't appear",
+                actual.contains(pizzaRat));
+        // equals() on lists checks contents and order:
+        assertEquals(Arrays.asList(pizzaHut, italiano, dominos, pizzaBad, pizzaWhat, nuna), actual);
+
+        cleanUpPlacesAndUsers();
+    }
+
+    @Test
 	public void FavoritesByRatingTest2() {
         PizzaWorld world = new PizzaWorldImpl();
 
         populateWorld(world);
         setUpConnections(world);
 
-        setUpRatings_DistBased(world); // <--- note the big difference
+        setUpRatings_FocusOnDistance(world); // <--- note the big difference
 
         Collection<PizzaPlace> actual=null;
         try {
@@ -269,34 +356,12 @@ public class PizzaWorldTest {
 	}
 
 	@Test
-	public void FavoritesByDistTest() {
-		PizzaWorld world = new PizzaWorldImpl();
-
-		populateWorld(world);
-		setUpConnections(world);
-        setUpRatings_RatingBased(world);
-
-        Collection<PizzaPlace> actual=null;
-        try {
-            actual = world.favoritesByDist(student);
-        } catch (PizzaLover.PizzaLoverNotInSystemException e){
-            fail();
-        }
-        assertFalse("Splinter isn't direct friend of student, Pizza Rat shouldn't appear",
-                actual.contains(pizzaRat));
-        // equals() on lists checks contents and order:
-        assertEquals(Arrays.asList(pizzaHut, italiano, dominos, pizzaBad, pizzaWhat, nuna), actual); // unlike FavoritesByRatingTest - hut before italiano
-
-		cleanUpPlacesAndUsers();
-	}
-
-	@Test
 	public void FavoritesByDistTest2() {
 		PizzaWorld world = new PizzaWorldImpl();
 
 		populateWorld(world);
 		setUpConnections(world);
-        setUpRatings_DistBased(world); // <--- note the big difference
+        setUpRatings_FocusOnDistance(world); // <--- note the big difference
 
         Collection<PizzaPlace> actual=null;
         try {
@@ -313,7 +378,7 @@ public class PizzaWorldTest {
 	}
 
 	@Test
-	public void toStringTest() {
+	public void ToStringTest() {
 		PizzaWorld world = new PizzaWorldImpl();
 
 		// Initial state:
@@ -347,7 +412,7 @@ public class PizzaWorldTest {
 
 	@Test
 	public void GetRecommendationTest() {
-		fail("You did not implement this test");//TODO
+		fail("You did not implement this test: GetRecommendationTest");//TODO
 	}
 
 }
