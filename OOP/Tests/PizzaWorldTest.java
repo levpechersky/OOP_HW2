@@ -410,9 +410,71 @@ public class PizzaWorldTest {
 		cleanUpPlacesAndUsers();
 	}
 
-	@Test
+    private void setUpRatings_ForGetRecommendation(PizzaWorld world) {
+        try {
+            italiano.rate(shredder, 5);
+            pizzaHut.rate(michelangelo, 5);
+            dominos.rate(leonardo, 5);
+            pizzaBad.rate(foreverAlone, 5);
+            pizzaWhat.rate(donatello, 5);
+            nuna.rate(krang, 5);
+            pizzaRat.rate(splinter, 5);
+        } catch (Exception e){
+            fail();
+        }
+
+        try {
+            //                                 distance from student
+            leonardo.favorite(dominos); //     1
+            michelangelo.favorite(pizzaHut);// 1
+            donatello.favorite(pizzaWhat);//   1
+
+            splinter.favorite(pizzaRat);//     2
+            shredder.favorite(italiano);//     3
+            krang.favorite(nuna);//            4
+            foreverAlone.favorite(pizzaBad);// infinity (not reachable)
+        } catch (Exception e){
+            fail();
+        }
+    }
+
+    @Test
 	public void GetRecommendationTest() {
-		fail("You did not implement this test: GetRecommendationTest");//TODO
+        PizzaWorld world = new PizzaWorldImpl();
+
+        populateWorld(world);
+        setUpConnections(world);
+        setUpRatings_ForGetRecommendation(world);
+
+        try {
+            // Exact distance:
+            assertTrue(world.getRecommendation(student, dominos, 1));
+            assertTrue(world.getRecommendation(student, pizzaHut, 1));
+            assertTrue(world.getRecommendation(student, pizzaWhat, 1));
+            assertTrue(world.getRecommendation(student, pizzaRat, 2));
+            assertTrue(world.getRecommendation(student, italiano, 3));
+            assertTrue(world.getRecommendation(student, nuna, 4));
+            // Larger t:
+            assertTrue(world.getRecommendation(student, pizzaHut, Integer.MAX_VALUE));
+            assertTrue(world.getRecommendation(student, dominos, 2));
+            assertTrue(world.getRecommendation(student, pizzaRat, 3));
+            assertTrue(world.getRecommendation(student, italiano, 4));
+            assertTrue(world.getRecommendation(student, nuna, 5));
+            // Smaller than needed distance:
+            assertFalse(world.getRecommendation(student, pizzaWhat, 0));
+            assertFalse(world.getRecommendation(student, pizzaHut, 0));
+            assertFalse(world.getRecommendation(student, pizzaWhat, 0));
+            assertFalse(world.getRecommendation(student, pizzaRat, 1));
+            assertFalse(world.getRecommendation(student, italiano, 2));
+            assertFalse(world.getRecommendation(student, nuna, 3));
+            // Unreachable node:
+            assertFalse(world.getRecommendation(student, pizzaBad, 1));
+            assertFalse(world.getRecommendation(student, pizzaBad, Integer.MAX_VALUE));
+        } catch (Exception e){
+            fail();
+        }
+
+        cleanUpPlacesAndUsers();
 	}
 
 }

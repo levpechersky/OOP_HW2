@@ -147,11 +147,47 @@ public class PizzaWorldImpl implements PizzaWorld {
         checked.add(pl);
         boolean found = false;
         for(PizzaLover other : this._user_connections.get(pl)) {
-            found |= getRecommendation(other, pp, t-1);
+            found |= getRecommendation_aux(checked, other, pp, t-1);
             if(found == true)
                 break;
         }
         return found;
+    }
+
+	private boolean getRecommendation_bfs(PizzaLover pl, PizzaPlace pp, int t) throws PizzaLoverNotInSystemException,
+			PizzaPlaceNotInSystemException, ImpossibleConnectionException {
+        class PizzaLoverNode {
+            public PizzaLover user;
+            public int distance;
+
+            PizzaLoverNode(PizzaLover user, int distance){
+                this.user = user;
+                this.distance = distance;
+            }
+        }
+
+        Queue<PizzaLoverNode> queue = new LinkedList<>();
+        TreeSet<PizzaLover> visited = new TreeSet<>();
+        queue.add(new PizzaLoverNode(pl, 0));
+        visited.add(pl);
+
+        PizzaLoverNode current;
+        while (!queue.isEmpty()){
+            current = queue.element();
+            if (current.distance > t)
+                return false;
+            if (current.user.favorites().contains(pp))
+                return true;
+
+            for (PizzaLover friend : current.user.getFriends()) {
+                if (!visited.contains(friend)){
+                    queue.add(new PizzaLoverNode(friend, current.distance + 1));
+                    visited.add(friend);
+                }
+            }
+            queue.remove();
+        }
+        return false;
     }
 
     @Override
@@ -164,9 +200,10 @@ public class PizzaWorldImpl implements PizzaWorld {
             throw new PizzaPlaceNotInSystemException();
         if(t < 0)
             throw new ImpossibleConnectionException();
-
-        Set<PizzaLover> checked = new TreeSet<>();
-        return getRecommendation_aux(checked, pl, pp, t);
+        // DFS doesn't seem to produce correct results here :(
+        //Set<PizzaLover> checked = new TreeSet<>();
+        //return getRecommendation_aux(checked, pl, pp, t);
+        return getRecommendation_bfs(pl, pp, t);
     }
 
     private String friendshipToString(PizzaLover user, Set<PizzaLover> friends) {
