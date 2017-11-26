@@ -1,7 +1,6 @@
 package OOP.Solution;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 
@@ -92,8 +91,9 @@ public class PizzaWorldImpl implements PizzaWorld {
         else if(this._user_connections.get(pl1).contains(pl2))
             throw new ConnectionAlreadyExistsException();
         else {
+            // Note: friendship here isn't symmetric
             this._user_connections.get(pl1).add(pl2);
-            //this._user_connections.get(pl2).add(pl1); // friendship here isn't symmetric
+            pl1.addFriend(pl2);
             return this;
         }
     }

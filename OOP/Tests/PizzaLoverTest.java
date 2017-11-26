@@ -233,7 +233,7 @@ public class PizzaLoverTest {
     }
 
     @Test
-    public void FavouritesByDist_SeconfdaryOrderTest(){
+    public void FavouritesByDist_SecondaryOrderTest(){
         // PP are defined in expected order.
         // Note, that now all distances are the same.
         PizzaPlace p4 = new PizzaPlaceImpl(40, "BadPizza", 100, complements);
