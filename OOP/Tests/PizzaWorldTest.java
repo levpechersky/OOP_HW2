@@ -105,25 +105,16 @@ public class PizzaWorldTest {
 
 	private void setUpConnections(PizzaWorld world){
         try { // Now let's make friends:
-            // Make TNMT a clique: Leonardo with all
+            // Make TNMT a clique:
             world.addConnection(leonardo, donatello);
             world.addConnection(leonardo, michelangelo);
             world.addConnection(leonardo, rafael);
-            assertEquals(3, leonardo.getFriends().size());
-            // Make TNMT a clique: Donatello with all
-            world.addConnection(donatello, leonardo);
             world.addConnection(donatello, michelangelo);
             world.addConnection(donatello, rafael);
-            assertEquals(3, donatello.getFriends().size());
-            // Make TNMT a clique: Michelangelo with all
-            world.addConnection(michelangelo, leonardo);
-            world.addConnection(michelangelo, donatello);
             world.addConnection(michelangelo, rafael);
+            assertEquals(3, leonardo.getFriends().size());
             assertEquals(3, michelangelo.getFriends().size());
-            // Make TNMT a clique: Rafael with all
-            world.addConnection(rafael, leonardo);
-            world.addConnection(rafael, donatello);
-            world.addConnection(rafael, michelangelo);
+            assertEquals(3, donatello.getFriends().size());
             assertEquals(3, rafael.getFriends().size());
 
             // all TNMT are friends of Student:
@@ -142,14 +133,14 @@ public class PizzaWorldTest {
             world.addConnection(michelangelo, splinter);
             world.addConnection(donatello, splinter);
             world.addConnection(rafael, splinter);
-            assertEquals(4, leonardo.getFriends().size());
-            assertEquals(4, donatello.getFriends().size());
-            assertEquals(4, michelangelo.getFriends().size());
-            assertEquals(4, rafael.getFriends().size());
+            assertEquals(5, leonardo.getFriends().size());
+            assertEquals(5, donatello.getFriends().size());
+            assertEquals(5, michelangelo.getFriends().size());
+            assertEquals(5, rafael.getFriends().size());
 
             // Splinter is a friend of Shredder. It's kinda weird, but I need it for the test (for deeper graph).
             world.addConnection(splinter, shredder);
-            assertEquals(1, splinter.getFriends().size());
+            assertEquals(5, splinter.getFriends().size());
         } catch (Exception e) {
             fail();
         }
@@ -397,13 +388,13 @@ public class PizzaWorldTest {
 				"Pizza lovers:\n" +
 				"1 -> [12345, 23456, 45678, 56789].\n" +
 				"300 -> [].\n" +
-				"12345 -> [23456, 45678, 56789, 67891].\n" +
-				"23456 -> [12345, 45678, 56789, 67891].\n" +
-				"45678 -> [12345, 23456, 56789, 67891].\n" +
-				"56789 -> [12345, 23456, 45678, 67891].\n" +
-				"67891 -> [78910].\n" +
-				"78910 -> [89101].\n" +
-				"89101 -> [].\n" +
+				"12345 -> [1, 23456, 45678, 56789, 67891].\n" +
+				"23456 -> [1, 12345, 45678, 56789, 67891].\n" +
+				"45678 -> [1, 12345, 23456, 56789, 67891].\n" +
+				"56789 -> [1, 12345, 23456, 45678, 67891].\n" +
+				"67891 -> [12345, 23456, 45678, 56789, 78910].\n" +
+				"78910 -> [67891, 89101].\n" +
+				"89101 -> [78910].\n" +
 				"End pizza lovers.";
 		assertEquals(world.toString(), expectedStr);
 

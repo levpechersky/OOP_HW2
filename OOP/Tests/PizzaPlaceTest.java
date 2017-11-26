@@ -108,7 +108,7 @@ public class PizzaPlaceTest {
             for (int i=0; i<lovers.length; i++) {
                 pp.rate(lovers[i], ratings_after[i]);
                 // number of ratings should stay as before (we are only updating existing ones)
-                assertEquals(pp.numberOfRates(), lovers.length);
+                assertEquals(pp.numberOfRates(), lovers.length + i + 1);
             }
         } catch (RateRangeException e){
             fail();

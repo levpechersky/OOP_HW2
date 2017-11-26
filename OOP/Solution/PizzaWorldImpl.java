@@ -90,9 +90,10 @@ public class PizzaWorldImpl implements PizzaWorld {
         if (this._user_connections.get(pl1).contains(pl2))
             throw new ConnectionAlreadyExistsException();
 
-        // Note: friendship isn't symmetric
         this._user_connections.get(pl1).add(pl2);
+        this._user_connections.get(pl2).add(pl1);
         pl1.addFriend(pl2);
+        pl2.addFriend(pl1);
         return this;
     }
 
@@ -106,7 +107,7 @@ public class PizzaWorldImpl implements PizzaWorld {
         List<PizzaPlace> result = new ArrayList<>();
 
         for (PizzaLover friend : pl.getFriends()){
-            List<PizzaPlace> appendix = friend.favoritesByRating(1).stream()
+            List<PizzaPlace> appendix = friend.favoritesByRating(0).stream()
                     .filter(x -> !alreadySeen.contains(x))
                     .collect(Collectors.toList());
             result.addAll(appendix);
