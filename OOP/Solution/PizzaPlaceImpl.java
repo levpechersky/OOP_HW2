@@ -20,7 +20,6 @@ public class PizzaPlaceImpl implements PizzaPlace {
 		this.distFromTech = distFromTech;
 		this.menu = new HashSet<>(menu); // copy set
 		this.ratings = new TreeMap<>();
-		this.numberOfRates = 0;
 	}
 
 	@Override
@@ -67,23 +66,22 @@ public class PizzaPlaceImpl implements PizzaPlace {
 	public PizzaPlace rate(PizzaLover pl, int r) throws RateRangeException {
 		if (r < 0 || r > 5)
 			throw new RateRangeException();
-		this.numberOfRates++;
 		this.ratings.put(pl, r); // puts new value or replaces an old one
 		return this;
 	}
 
 	@Override
 	public int numberOfRates() {
-		return this.numberOfRates;
+		return this.ratings.size();
 	}
 
 	@Override
 	public double averageRating() {
-		if (this.ratings.size() == 0)
+		if (this.numberOfRates() == 0)
 			return 0.0;
 
 		double ratings_sum = ratings.values().stream().mapToInt(Integer::intValue).sum();
-		return ratings_sum / this.ratings.size();
+		return ratings_sum / this.numberOfRates();
 	}
 
 	public boolean wasRatedBy(PizzaLover pizzaLover) {
