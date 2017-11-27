@@ -1,17 +1,14 @@
 package OOP.Solution;
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.TreeSet;
-import java.util.Comparator;
-import java.util.stream.Collectors;
-import java.util.function.Predicate;
-
-
 import OOP.Provided.PizzaLover;
 import OOP.Provided.PizzaPlace;
+
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class PizzaLoverImpl implements PizzaLover {
 
@@ -66,12 +63,6 @@ public class PizzaLoverImpl implements PizzaLover {
         }
     }
 
-    private class PlaceNameComparator implements Comparator<PizzaPlace> {
-        public int compare(PizzaPlace pp1, PizzaPlace pp2) {
-            return pp1.compareTo(pp2);
-        }
-    }
-
     private Predicate<PizzaPlace> withinDist(int dLimit) {
         return pp -> ((dLimit == -1) ? true : (pp.distance() <= dLimit));
     }
@@ -84,8 +75,8 @@ public class PizzaLoverImpl implements PizzaLover {
         this._id = id;
         this._name = name;
         this._favorite_places = 
-            new TreeSet<PizzaPlace>(new PlaceNameComparator());
-        this._user_friends = new TreeSet<PizzaLover>();
+            new TreeSet<>();
+        this._user_friends = new TreeSet<>();
     }
 
     @Override

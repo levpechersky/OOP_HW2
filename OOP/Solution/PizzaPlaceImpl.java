@@ -1,10 +1,12 @@
 package OOP.Solution;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import OOP.Provided.PizzaLover;
 import OOP.Provided.PizzaPlace;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class PizzaPlaceImpl implements PizzaPlace {
 	private int id;
@@ -12,7 +14,6 @@ public class PizzaPlaceImpl implements PizzaPlace {
 	private String name;
 	private HashSet<String> menu;
 	private TreeMap<PizzaLover, Integer> ratings;
-	private int numberOfRates; // number of rate() calls, unlike ratings.size()
 
 	public PizzaPlaceImpl(int id, String name, int distFromTech, Set<String> menu){
 		this.id = id;

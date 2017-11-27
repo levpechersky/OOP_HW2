@@ -1,9 +1,5 @@
 package OOP.Solution;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-
 import OOP.Provided.PizzaLover;
 import OOP.Provided.PizzaLover.ConnectionAlreadyExistsException;
 import OOP.Provided.PizzaLover.PizzaLoverAlreadyInSystemException;
@@ -13,6 +9,18 @@ import OOP.Provided.PizzaPlace;
 import OOP.Provided.PizzaPlace.PizzaPlaceAlreadyInSystemException;
 import OOP.Provided.PizzaPlace.PizzaPlaceNotInSystemException;
 import OOP.Provided.PizzaWorld;
+
+import java.util.stream.Collectors;
+import java.util.TreeSet;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.Queue;
+import java.util.Collection;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class PizzaWorldImpl implements PizzaWorld {
 
@@ -135,33 +143,13 @@ public class PizzaWorldImpl implements PizzaWorld {
         return result;
     }
 
-    //This method uses a Set and recursion to run a DFS on all friends.
-	private boolean getRecommendation_aux(Set<PizzaLover> checked, PizzaLover pl,
-										  PizzaPlace pp, int t) throws PizzaLoverNotInSystemException,
-			PizzaPlaceNotInSystemException, ImpossibleConnectionException {
-		if(checked.contains(pl))
-            return false;
-	    if(t == 0)
-            return pl.favorites().contains(pp);
-        if(pl.favorites().contains(pp))
-            return true;
-        checked.add(pl);
-        boolean found = false;
-        for(PizzaLover other : this._user_connections.get(pl)) {
-            found |= getRecommendation_aux(checked, other, pp, t-1);
-            if(found == true)
-                break;
-        }
-        return found;
-    }
-
 	private boolean getRecommendation_bfs(PizzaLover pl, PizzaPlace pp, int t) throws PizzaLoverNotInSystemException,
 			PizzaPlaceNotInSystemException, ImpossibleConnectionException {
         class PizzaLoverNode {
             public PizzaLover user;
             public int distance;
 
-            PizzaLoverNode(PizzaLover user, int distance){
+            public PizzaLoverNode(PizzaLover user, int distance){
                 this.user = user;
                 this.distance = distance;
             }
@@ -201,9 +189,7 @@ public class PizzaWorldImpl implements PizzaWorld {
             throw new PizzaPlaceNotInSystemException();
         if(t < 0)
             throw new ImpossibleConnectionException();
-        // DFS doesn't seem to produce correct results here :(
-        //Set<PizzaLover> checked = new TreeSet<>();
-        //return getRecommendation_aux(checked, pl, pp, t);
+
         return getRecommendation_bfs(pl, pp, t);
     }
 
